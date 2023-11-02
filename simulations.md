@@ -1,18 +1,11 @@
----
-title: "simulations"
-author: "Lucia Wang"
-date: "2023-11-02"
-output: github_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(tidyverse)
-set.seed(12345)
-```
+simulations
+================
+Lucia Wang
+2023-11-02
 
 ## simulate sample mean and sd
-```{r}
+
+``` r
 sim_mean_sd = function(n, mu = 2, sigma = 3) {
   
   sim_data = tibble(
@@ -29,10 +22,17 @@ sim_mean_sd = function(n, mu = 2, sigma = 3) {
 sim_mean_sd(n=30)
 ```
 
-if we want to run it iteratively... lets put the results into dataframe with a loop.
+    ## # A tibble: 1 × 2
+    ##   mu_hat sigma_hat
+    ##    <dbl>     <dbl>
+    ## 1   2.24      2.81
 
-in the past we defined an input and output: 
-```{r}
+if we want to run it iteratively… lets put the results into dataframe
+with a loop.
+
+in the past we defined an input and output:
+
+``` r
 output= vector("list", length=100)
 
 for (i in 1:100) {
@@ -44,13 +44,14 @@ for (i in 1:100) {
 sim_results = bind_rows(output)
 
 sim_results |> ggplot(aes(x=mu_hat)) + geom_density()
-
 ```
 
-do it with a map function if you are iterating multiple times?
-input = true sample size 
-iterate = number of times
-```{r}
+![](simulations_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+do it with a map function if you are iterating multiple times? input =
+true sample size iterate = number of times
+
+``` r
 sim_result_df = 
   expand_grid(
     sample_size = 30,
@@ -63,7 +64,8 @@ sim_result_df =
 ```
 
 what about multiple iterations?
-```{r}
+
+``` r
 sim_result2_df = 
   expand_grid(
     sample_size = c(30,60,120, 240), #now theres 100 rows PER sample size
@@ -80,8 +82,11 @@ sim_result2_df |>
   ggplot(aes(x=sample_size, y=mu_hat)) + geom_boxplot()
 ```
 
+![](simulations_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
 using rbinom
-```{r}
+
+``` r
 sim_mean_sd2 = function(n_obs, true_p = .9) {
   
   sim_data = tibble(
@@ -111,5 +116,4 @@ sim_result3_df |>
   ggplot(aes(x=sample_size, y=mu_hat)) + geom_boxplot()
 ```
 
-
-
+![](simulations_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
