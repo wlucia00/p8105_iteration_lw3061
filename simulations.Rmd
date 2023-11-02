@@ -1,0 +1,12 @@
+---
+title: "simulations"
+author: "Lucia Wang"
+date: "2023-11-02"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
