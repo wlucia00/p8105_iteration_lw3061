@@ -117,3 +117,85 @@ sim_result3_df |>
 ```
 
 ![](simulations_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+## simple linear regression for one n
+
+goal: function that simulates data, fits into SLR, then repeats to look
+at the distribution of estimated coefficients
+
+``` r
+beta_0 = 2
+beta_1 = 3
+
+sim_data = 
+  tibble(
+    x = rnorm(n=30, mean=1, sd=1),
+    y = beta_0 + beta_1*x + rnorm(30,0,1)
+  )
+
+ls_fit = lm(y~x, data=sim_data)
+ls_fit
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = y ~ x, data = sim_data)
+    ## 
+    ## Coefficients:
+    ## (Intercept)            x  
+    ##       1.858        2.851
+
+``` r
+sim_data |>
+  ggplot(aes(x=x, y=y)) + geom_point()
+```
+
+![](simulations_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+now simulate it
+
+``` r
+sim_slr = function(n_obs, beta_0 = 2, beta_1=3) {
+  
+  sim_data_out = 
+    tibble(
+       x=rnorm(n_obs, mean = 1, sd=1),
+      y = beta_0 + beta_1*x + rnorm(n_obs, 0, 1)
+  )
+  
+  ls_fit = lm(y~x, data=sim_data)
+  
+  tibble(
+    beta0_hat = coef(ls_fit)[1],
+    beta1_hat = coef(ls_fit)[2]
+  )
+  
+}
+
+sim_slr(n_obs=30)
+```
+
+    ## # A tibble: 1 × 2
+    ##   beta0_hat beta1_hat
+    ##       <dbl>     <dbl>
+    ## 1      1.86      2.85
+
+run this a bunch
+
+``` r
+sim_result4_df =
+  expand_grid(
+    sample_size = 30,
+    iteration= 1:1000
+  ) |>
+  mutate(
+    estimate_df = map(sample_size, sim_slr)
+  ) |>
+  unnest(estimate_df)
+
+sim_result4_df |> 
+  ggplot(aes(x = beta0_hat, y = beta1_hat)) + 
+  geom_point()
+```
+
+![](simulations_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
